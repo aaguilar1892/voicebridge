@@ -1,4 +1,4 @@
-# CSCE 3444 - WePaint Project
+# CSCE 3444 - VoiceBridge Project
 
 ## Group 12
 
