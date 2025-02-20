@@ -1,3 +1,3 @@
-opencv-python # Have to install and run py -3.10 pip install -r requirements.txt in cmd as python 3.10 is not the default python version on my pc
-mediapipe
+opencv-python 
+mediapipe # Have to install and run py -3.10 pip install -r requirements.txt in cmd 
 tensorflow # We can use torch or torchvision as well
