@@ -1,17 +1,25 @@
+import time
 import cv2
 
 cap = cv2.VideoCapture(0)
-if not cap.isOpened():
-    print("Cannot open camera")
-    exit()
+prev_time = time.time()
 
 while True:
     ret, frame = cap.read()
     if not ret:
-        print("Can't receive frame (stream end?). Exiting ...")
         break
-    cv2.imshow('Camera Test', frame)
-    if cv2.waitKey(1) == ord('q'):
+
+    # Calculate instantaneous FPS
+    current_time = time.time()
+    fps = 1 / (current_time - prev_time)
+    prev_time = current_time
+
+    # Display FPS on the frame
+    cv2.putText(frame, f"FPS: {int(fps)}", (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+    cv2.imshow('Camera Feed', frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
