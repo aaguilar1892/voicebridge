@@ -1,3 +1,5 @@
+import React from 'react';
+import Speech from 'react-speech';
 import { useState } from 'react';
 import { Link } from "react-scroll";
 import './App.css';
