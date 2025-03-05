@@ -3,7 +3,25 @@ import { Link } from "react-scroll";
 import { motion } from 'framer-motion'; // Import motion
 import heroImg from '/src/assets/svg/hero.svg';  // Ensure the correct path
 
+let utterance_welcome = new SpeechSynthesisUtterance("Welcome to Voice Bridge!");
+let utterance_subtitle = new SpeechSynthesisUtterance("Your Personal ASL Interpreter and Translator! Friendly and Interactive for BVI users.");
+let utterance_start = new SpeechSynthesisUtterance("Get Started");
+let utterance_login = new SpeechSynthesisUtterance("Log in");
+
 const Hero = () => {
+
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseEnter = (utterance) => {
+      setIsHovered(true);
+      speechSynthesis.speak(utterance);
+    };
+  
+    const handleMouseLeave = () => {
+      setIsHovered(false);
+      speechSynthesis.cancel();
+    };
+
     return (
         <section id="home" className="min-h-screen bg-gray-100 text-black flex items-center">
             <div className="container flex flex-col justify-center p-6 mx-auto sm:py-12 lg:py-24 lg:flex-row lg:justify-between">
@@ -16,6 +34,8 @@ const Hero = () => {
                         initial={{ opacity: 0, x: -100 }} // Initial state
                         animate={{ opacity: 1, x: 0 }} // Final state
                         transition={{ duration: 1 }} // Transition properties
+                        onMouseEnter={() => handleMouseEnter(utterance_welcome)}
+                        onMouseLeave={handleMouseLeave}
                     >
                         Welcome to 
                         <span className="text-yellow-600"> VoiceBridge</span>!
@@ -27,6 +47,8 @@ const Hero = () => {
                         initial={{ opacity: 0, y: 50 }} // Initial state
                         animate={{ opacity: 1, y: 0 }} // Final state
                         transition={{ duration: 1, delay: 0.3 }} // Transition with delay
+                        onMouseEnter={() => handleMouseEnter(utterance_subtitle)}
+                        onMouseLeave={handleMouseLeave}
                     >
                         Your Personal ASL Interpreter and Translator! 
                         <br className="hidden md:inline lg:hidden" /> Friendly and Interactive for BVI users.
@@ -39,10 +61,17 @@ const Hero = () => {
                             smooth={true} 
                             duration={500}
                             className="px-8 py-3 text-lg font-semibold rounded bg-yellow-600 hover:bg-yellow-700 text-white cursor-pointer"
+                            onMouseEnter={() => handleMouseEnter(utterance_start)}
+                            onMouseLeave={handleMouseLeave}
                         >
                             Get Started
                         </Link>
-                        <a href="#" className="px-8 py-3 text-lg font-semibold border rounded border-black hover:bg-gray-300">Log in</a>
+                        <a href="#" className="px-8 py-3 text-lg font-semibold border rounded border-black hover:bg-gray-300"
+                         onMouseEnter={() => handleMouseEnter(utterance_login)}
+                         onMouseLeave={handleMouseLeave}
+                        >
+                         Log in
+                        </a>
                     </div>
                 </div>
 
