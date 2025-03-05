@@ -3,6 +3,7 @@ import cv2
 from gesture_recognition import GestureRecognizer
 from svm_classifier import SVM
 
+
 # Text attributes for window
 org = (50, 100)
 fontFace = cv2.FONT_HERSHEY_SIMPLEX
