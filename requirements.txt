@@ -3,4 +3,5 @@ mediapipe # Have to install and run py -3.10 pip install -r requirements.txt in 
 tensorflow # We can use torch or torchvision as well
 joblib
 scikit-learn
-pyttsx3
+gtts
+pygame
