@@ -1,20 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import Webcam from 'react-webcam';
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
 
 const Translate = () => {
-
-    const fetchAPI = async () => {
-        const response = await axios.get("http://localhost:8080/api/users");
-        console.log(response.data.users);
-    };
-
-    useEffect(() =>{
-        fetchAPI()
-    },[])
-
     const [text, setText] = useState('');
-    const webcamRef = useRef(null);
     const [isWebcamOn, setIsWebcamOn] = useState(true);
 
     const handleTextChange = (event) => {
@@ -33,10 +20,10 @@ const Translate = () => {
                 {/* Webcam Feed - Larger & Rectangular */}
                 <div className="relative bg-white rounded-xl shadow-lg overflow-hidden">
                     {isWebcamOn ? (
-                        <Webcam
-                            ref={webcamRef}
+                        <img
+                            src="http://localhost:5001/video_feed"  // Use the updated port here
+                            alt="Webcam Feed"
                             className="w-full h-[400px] object-cover rounded-xl"
-                            videoConstraints={{ width: 640, height: 400, facingMode: "user" }}
                         />
                     ) : (
                         <div className="w-full h-[400px] flex items-center justify-center bg-gray-300 rounded-xl">
@@ -46,8 +33,8 @@ const Translate = () => {
                 </div>
 
                 {/* Toggle Button */}
-                <button 
-                    onClick={toggleWebcam} 
+                <button
+                    onClick={toggleWebcam}
                     className="px-6 py-3 bg-yellow-600 text-white text-lg font-semibold rounded-lg hover:bg-yellow-700 transition"
                 >
                     {isWebcamOn ? "Turn Off Webcam" : "Turn On Webcam"}
