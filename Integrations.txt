@@ -1,0 +1,62 @@
+# this a demo testing of Real-Time Audio Synthesis & Latency Optimization:
+
+import threading
+import pyttsx3
+import time
+import queue
+
+class RealTimeTTS:
+    def __init__(self):
+        # Initialize the TTS engine
+        self.engine = pyttsx3.init()
+        # Set engine properties for optimal performance
+        self.engine.setProperty('rate', 150)   # Speaking rate
+        self.engine.setProperty('volume', 1.0)   # Volume level
+
+        # Create a queue to hold incoming TTS requests
+        self.tts_queue = queue.Queue()
+        self.running = True
+
+        # Start a background thread to process the TTS queue
+        self.thread = threading.Thread(target=self._process_queue)
+        self.thread.daemon = True  # Ensure the thread exits with the main program
+        self.thread.start()
+
+    def _process_queue(self):
+        while self.running:
+            try:
+                # Wait briefly for a new text input
+                text = self.tts_queue.get(timeout=0.1)
+                if text:
+                    self.engine.say(text)
+                    self.engine.runAndWait()  # This call is blocking but runs in its own thread
+            except queue.Empty:
+                continue
+
+    def speak(self, text):
+        """Add text to the TTS queue for asynchronous processing."""
+        self.tts_queue.put(text)
+
+    def stop(self):
+        """Stop the TTS processing thread."""
+        self.running = False
+        self.thread.join()
+
+# Demo usage of RealTimeTTS for testing real-time audio synthesis and latency optimization
+if __name__ == '__main__':
+    tts = RealTimeTTS()
+    try:
+        messages = [
+            "Hello, this is the first message.",
+            "Now demonstrating low latency synthesis.",
+            "Testing real-time audio output optimization.",
+            "End of demo."
+        ]
+        for msg in messages:
+            tts.speak(msg)
+            time.sleep(1)  # Simulate real-time delay between messages
+
+        # Allow extra time for any remaining queued messages to be processed
+        time.sleep(3)
+    finally:
+        tts.stop()
