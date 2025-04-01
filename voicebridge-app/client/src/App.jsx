@@ -4,6 +4,7 @@ import Header from './assets/components/Header';
 import Hero from './assets/components/Hero';
 import About from './assets/components/About';
 import Translate from './assets/components/Translate';
+import Login from './assets/components/Login';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           </div>
         } />
         <Route path="/voicebridge/translate" element={<Translate />} />
+        <Route path="/voicebridge/login" element={<Login />} />
       </Routes>
     </Router>
   );
