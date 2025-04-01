@@ -2,6 +2,8 @@
 import cv2
 from gesture_recognition import GestureRecognizer
 from svm_classifier import SVM
+from audio_player import TextToSpeechEngine
+
 
 # Text attributes for window
 org = (50, 100)
@@ -10,7 +12,7 @@ fontScale = 1
 color = (255, 255, 255)  # White color
 thickness = 2
 
-model_path = 'Python work\\model_training\\alphabet_svm_pipeline.pkl' # path for model weights
+model_path = 'model_training/alphabet_svm_pipeline.pkl' # path for model weights
 
 def main():
     svm = SVM(model_path, 'alphabet')
@@ -22,6 +24,9 @@ def main():
 
     # Create an instance of GestureRecognizer
     recognizer = GestureRecognizer()
+
+    # Initialize tts engine
+    tts_engine = TextToSpeechEngine(lang='en')
 
     while True:
         ret, frame = cap.read()
@@ -37,6 +42,10 @@ def main():
         pred = svm.predict(results.right_hand_landmarks)
     
         cv2.putText(frame, pred, org, fontFace, fontScale, color, thickness)
+
+        # Speak the prediction
+        tts_engine.speak_async(pred)
+        
         cv2.imshow('Camera Feed with Landmarks', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
