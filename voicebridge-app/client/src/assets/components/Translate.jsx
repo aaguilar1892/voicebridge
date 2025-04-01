@@ -1,25 +1,13 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import axios from 'axios';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
-=======
-
-let utterance_translate = new SpeechSynthesisUtterance("Translate");
-let utterance_webcam_off = new SpeechSynthesisUtterance("Turn Off Webcam");
-let utterance_webcam_on = new SpeechSynthesisUtterance("Turn On Webcam");
-let utterance_enter_text = new SpeechSynthesisUtterance("Enter text here");
->>>>>>> main
 
 const Translate = () => {
     const [text, setText] = useState('');
     const [isWebcamOn, setIsWebcamOn] = useState(true);
-<<<<<<< HEAD
     const [letterDetected, setLetterDetected] = useState(false);
     const [loading, setLoading] = useState(false);
     const [buttonClicked, setButtonClicked] = useState(false);
-=======
-    const [isHovered, setIsHovered] = useState(false);
->>>>>>> main
 
     const fetchPrediction = async () => {
         if (loading) return; // Prevent multiple clicks during loading
@@ -64,29 +52,9 @@ const Translate = () => {
         }
     }, [loading]);  // Reset state only when loading is false
 
-    const handleMouseEnter = (utterance) => {
-        setIsHovered(true);
-        speechSynthesis.speak(utterance);
-    };
-    
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-        speechSynthesis.cancel();
-    };
-
-    const handleMouseEnterWebcam = () => {
-        setIsHovered(true);
-        isWebcamOn ? speechSynthesis.speak(utterance_webcam_off) : speechSynthesis.speak(utterance_webcam_on);
-    }
-
     return (
         <div className="flex flex-col items-center bg-gray-100 p-6 pt-24 min-h-screen">
-            <h1 className="text-4xl font-bold mb-6 text-gray-800"
-                onMouseEnter={() => handleMouseEnter(utterance_translate)}
-                onMouseLeave={handleMouseLeave}
-            >
-                Translate
-            </h1>
+            <h1 className="text-4xl font-bold mb-6 text-gray-800">Translate</h1>
 
             <div className="w-full max-w-3xl flex flex-col gap-6">
                 {/* Webcam Feed */}
@@ -98,11 +66,7 @@ const Translate = () => {
                 >
                     {isWebcamOn ? (
                         <img
-<<<<<<< HEAD
                             src="http://localhost:5001/video_feed"
-=======
-                            src="http://localhost:5001/video_feed"  // Use the updated port here
->>>>>>> main
                             alt="Webcam Feed"
                             className="w-full h-[400px] object-cover rounded-xl"
                         />
@@ -127,7 +91,6 @@ const Translate = () => {
                     )}
                 </div>
 
-<<<<<<< HEAD
                 {/* Capture Button */}
                 <button
                     onClick={fetchPrediction}
@@ -142,14 +105,7 @@ const Translate = () => {
                 {/* Toggle Webcam */}
                 <button
                     onClick={() => setIsWebcamOn(!isWebcamOn)}
-=======
-                {/* Toggle Button */}
-                <button
-                    onClick={toggleWebcam}
->>>>>>> main
                     className="px-6 py-3 bg-yellow-600 text-white text-lg font-semibold rounded-lg hover:bg-yellow-700 transition"
-                    onMouseEnter={() => handleMouseEnterWebcam()}
-                    onMouseLeave={handleMouseLeave}
                 >
                     {isWebcamOn ? "Turn Off Webcam" : "Turn On Webcam"}
                 </button>
