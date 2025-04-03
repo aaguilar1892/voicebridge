@@ -71,7 +71,7 @@ const Login = () => {
                         >
                             Password
                         </label>
-                        <input type = "text" id = "password" class = "border w-full text-base px-2 py-2 focus:outline-none focus:ring-0 focus:border-gray-600 rounded" placeholder = "Enter Password"
+                        <input type = "password" id = "password" class = "border w-full text-base px-2 py-2 focus:outline-none focus:ring-0 focus:border-gray-600 rounded" placeholder = "Enter Password"
                         onChange = {(e) => setPassword(e.target.value)}
                         onMouseEnter={() => handleMouseEnter(utterance_enter_password)}
                         onMouseLeave={handleMouseLeave}
