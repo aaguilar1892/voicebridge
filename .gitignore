@@ -1,3 +1,5 @@
 node_modules
 .venv
+venv
 /python-work/__pycache__/
+.env
