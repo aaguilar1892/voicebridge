@@ -1,3 +1,5 @@
 node_modules
 .venv
+/voicebridge-app/client/node_modules
+
 /python-work/__pycache__/
