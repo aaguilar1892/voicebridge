@@ -66,7 +66,9 @@ const Hero = () => {
                         >
                             Get Started
                         </Link>
-                        <a href="#" className="px-8 py-3 text-lg font-semibold border rounded border-black hover:bg-gray-300"
+                        <a href="/voicebridge/Login"
+                         to="login"
+                         className="px-8 py-3 text-lg font-semibold border rounded border-black hover:bg-gray-300"
                          onMouseEnter={() => handleMouseEnter(utterance_login)}
                          onMouseLeave={handleMouseLeave}
                         >

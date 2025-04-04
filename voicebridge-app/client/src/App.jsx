@@ -5,6 +5,7 @@ import Hero from './assets/components/Hero';
 import About from './assets/components/About';
 import Translate from './assets/components/Translate';
 import Speech from './assets/components/Speech';
+import Login from './assets/components/Login';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         } />
         <Route path="/voicebridge/translate" element={<Translate />} />
         <Route path="/voicebridge/speech" element={<Speech />} />
+        <Route path="/voicebridge/login" element={<Login />} />
       </Routes>
     </Router>
   );
