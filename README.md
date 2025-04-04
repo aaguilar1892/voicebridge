@@ -20,6 +20,8 @@
 python -m venv venv
 source venv/bin/activate  # macOS/Linux
 venv\Scripts\activate     # Windows
+python3 app.y # macOS/Linux
+python app.py # Windows
 ```
 
 ### 2. Frontend (React)
