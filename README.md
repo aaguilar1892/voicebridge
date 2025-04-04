@@ -15,6 +15,15 @@
 
 ### 1. Backend (Flask)
 
+- Navigate to the backend directory.
+- Create and activate a virtual environment:
+
+```bash
+python -m venv venv
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate     # Windows
+```
+
 **Install dependencies:**
 
 ```bash
