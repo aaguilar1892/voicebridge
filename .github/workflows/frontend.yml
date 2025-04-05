@@ -1,0 +1,48 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'voicebridge-app/client/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'voicebridge-app/client/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '19'
+        cache: 'npm'
+        cache-dependency-path: 'voicebridge-app/client/package-lock.json'
+
+    - name: Install dependencies
+      run: |
+        cd voicebridge-app/client
+        npm install
+
+    - name: Lint
+      run: |
+        cd voicebridge-app/client
+        npm run lint
+
+    - name: Build
+      run: |
+        cd voicebridge-app/client
+        npm run build
+
+    - name: Deploy to GitHub Pages
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        cd voicebridge-app/client
+        npm run deploy
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
