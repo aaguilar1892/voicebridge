@@ -46,4 +46,4 @@ jobs:
         cd voicebridge-app/client
         npm run deploy
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
