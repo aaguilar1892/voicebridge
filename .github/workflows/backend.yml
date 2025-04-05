@@ -3,14 +3,8 @@ name: Backend CI/CD
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'voicebridge-app/server/**'
-      - 'requirements.txt'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'voicebridge-app/server/**'
-      - 'requirements.txt'
 
 jobs:
   test:

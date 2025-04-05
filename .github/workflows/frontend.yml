@@ -3,12 +3,8 @@ name: Frontend CI/CD
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'voicebridge-app/client/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'voicebridge-app/client/**'
 
 jobs:
   build:
