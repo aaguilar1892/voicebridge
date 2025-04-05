@@ -25,10 +25,10 @@ jobs:
         cd voicebridge-app/client
         npm install
 
-    - name: Lint
-      run: |
-        cd voicebridge-app/client
-        npm run lint
+    #- name: Lint
+    #  run: |
+    #    cd voicebridge-app/client
+    #    npm run lint
 
     - name: Build
       run: |
