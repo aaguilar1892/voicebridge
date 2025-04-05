@@ -24,8 +24,8 @@ const Login = () => {
     };
 
     return (
-        <div class = "flex justify-center items-center h-screen bg-cyan-50">
-            <div class = "w-150 h-110 p-6 shadow-2xl bg-white rounded-xl">
+        <div class = "flex justify-center items-center h-screen">
+            <div class = "w-150 h-102 p-6 shadow-2xl bg-white rounded-xl border-4 border-gray-500 shadow-yellow-600">
                 <h1 class = "text-3xl block text-center font-bold"
                  onMouseEnter={() => handleMouseEnter(utterance_login)}
                  onMouseLeave={handleMouseLeave}
@@ -43,7 +43,7 @@ const Login = () => {
                     >
                         Username
                     </label>
-                    <input type = "text" id = "username" class = "border w-full text-base px-2 py-2 focus:outline-none focus:ring-0 focus:border-gray-600 rounded" placeholder = "Enter Username"
+                    <input type = "text" id = "username" class = "border w-full text-base px-2 py-2 focus:outline-none focus:ring-0 focus:border-gray-600 rounded shadow-xl" placeholder = "Enter Username"
                      onMouseEnter={() => handleMouseEnter(utterance_enter_username)}
                      onMouseLeave={handleMouseLeave}
                     ></input>
@@ -55,11 +55,12 @@ const Login = () => {
                     >
                         Password
                     </label>
-                    <input type = "text" id = "password" class = "border w-full text-base px-2 py-2 focus:outline-none focus:ring-0 focus:border-gray-600 rounded" placeholder = "Enter Password"
+                    <input type = "text" id = "password" class = "border w-full text-base px-2 py-2 focus:outline-none focus:ring-0 focus:border-gray-600 rounded shadow-xl" placeholder = "Enter Password"
                      onMouseEnter={() => handleMouseEnter(utterance_enter_password)}
                      onMouseLeave={handleMouseLeave}
                     ></input>
                 </div>
+                {/*
                 <div class = "mt-3 flex justify-between items-center font-semibold">
                     <div>
                         <span class = "flex gap-1">
@@ -81,19 +82,20 @@ const Login = () => {
                         </a>
                     </div>
                 </div>
+                */}
                 <div class = "mt-6 font-bold flex flex-col gap-5">
-                    <button type = "submit" class = "border-2 border-yellow-600 bg-yellow-600 shadow-xl rounded-sm text-white py-2 w-full cursor-pointer"
+                    <button type = "submit" class = "border-2 border-gray-500 bg-gray-500 shadow-xl rounded-sm text-white py-2 w-full cursor-pointer"
                      onMouseEnter={() => handleMouseEnter(utterance_login)}
                      onMouseLeave={handleMouseLeave}
                     >
                         Login
                     </button>
-                    <button type = "submit" class = "border-2 border-yellow-600 bg-yellow-600 shadow-xl rounded-sm text-white py-2 w-full cursor-pointer"
+                    <a href="/voicebridge/Signup" class = "border-2 border-yellow-600 bg-yellow-600 shadow-xl rounded-sm text-white py-2 w-full cursor-pointer flex justify-center"
                      onMouseEnter={() => handleMouseEnter(utterance_signup)}
                      onMouseLeave={handleMouseLeave}
                     >
                         Sign up
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
