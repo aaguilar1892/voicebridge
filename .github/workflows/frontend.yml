@@ -42,6 +42,8 @@ jobs:
 
     - name: Deploy to GitHub Pages
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
         cd voicebridge-app/client
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}npm run deploy
+        npm run deploy
