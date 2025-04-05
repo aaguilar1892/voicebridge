@@ -1,4 +1,12 @@
-let utterance_fogot_password = new SpeechSynthesisUtterance("Forgot password?");
+import React from 'react';
+import { FaUser } from "react-icons/fa";
+import { useState } from 'react';
+
+
+let utterance_login = new SpeechSynthesisUtterance("Log in");
+let utterance_signup = new SpeechSynthesisUtterance("Sign up");
+let utterance_remember_me = new SpeechSynthesisUtterance("Remember me");
+let utterance_forgot_password = new SpeechSynthesisUtterance("Forgot password?");
 let utterance_username = new SpeechSynthesisUtterance("Username");
 let utterance_password = new SpeechSynthesisUtterance("Password");
 let utterance_enter_username = new SpeechSynthesisUtterance("Enter username");
@@ -7,21 +15,17 @@ let utterance_enter_password = new SpeechSynthesisUtterance("Enter password");
 
 const Login = () => {
 
-
    const [isHovered, setIsHovered] = useState(false);
    const [username, setUsername] = useState('');
    const [password, setPassword] = useState('');
-
 
    const handleMouseEnter = (utterance) => {
        speechSynthesis.speak(utterance);
    };
 
-
    const handleMouseLeave = () => {
        speechSynthesis.cancel();
    };
-
 
    const handleSubmit = async (e) => {
        e.preventDefault();
@@ -32,7 +36,6 @@ const Login = () => {
            console.log(err);
        }
    };
-
 
    return (
        <div class = "flex justify-center items-center h-screen">
@@ -110,7 +113,7 @@ const Login = () => {
                        >
                            Sign up
                        </a>
-                   </div>
+                    </div>
                </form>
            </div>
        </div>

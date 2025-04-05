@@ -40,7 +40,6 @@ const Signup = () => {
        }
    };
 
-
    return (
        <div class = "flex justify-center items-center h-screen">
            <div class = "w-150 h-98 p-6 shadow-2xl bg-white rounded-xl border-4 border-gray-500 shadow-yellow-600">
@@ -100,6 +99,5 @@ const Signup = () => {
        </div>
    );
 };
-
 
 export default Signup;
