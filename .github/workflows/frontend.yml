@@ -35,10 +35,15 @@ jobs:
         cd voicebridge-app/client
         npm run build
 
+    - name: Configure Git
+      run: |
+        git config --global user.name "Alex Aguilar"
+        git config --global user.email "aaguilar1892@gmail.com"
+
     - name: Deploy to GitHub Pages
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         cd voicebridge-app/client
         npm run deploy
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ github.token }}
