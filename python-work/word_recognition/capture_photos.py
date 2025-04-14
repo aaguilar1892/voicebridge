@@ -6,7 +6,7 @@ import time
 import uuid
 
 IMAGES_PATH = './python-work/word_recognition/data'
-labels = ['Please', 'Sorry', 'Excuse me', 'OK']
+labels = ['OK']
 number_imgs = 20  # Number of images to capture for each label
 
 # Create a window to show the webcam feed
