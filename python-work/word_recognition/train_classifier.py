@@ -8,7 +8,7 @@ import numpy as np
 
 
 TWO_HAND_MODE = True
-EXPECTED_FEATURES = 84 if TWO_HAND_MODE else 42
+EXPECTED_FEATURES = 85 if TWO_HAND_MODE else 42
 
 def pad_or_truncate(sample, expected_length=EXPECTED_FEATURES):
     """
