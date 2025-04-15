@@ -18,7 +18,7 @@ hands = mp_hands.Hands(static_image_mode=True, max_num_hands=2, min_detection_co
 mp_face_detection = mp.solutions.face_detection
 face_detection = mp_face_detection.FaceDetection(min_detection_confidence=0.5)
 
-DATA_DIR = './python-work/word_recognition/data'
+DATA_DIR = './data'
 
 data = []
 labels = []

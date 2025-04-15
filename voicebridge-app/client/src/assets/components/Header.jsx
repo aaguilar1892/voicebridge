@@ -8,6 +8,7 @@ let utterance_about_btn = new SpeechSynthesisUtterance("About");
 let utterance_get_started = new SpeechSynthesisUtterance("Get Started");
 let utterance_practice_btn = new SpeechSynthesisUtterance("Practice");
 let utterance_translate_btn = new SpeechSynthesisUtterance("Translate");
+let utterance_speech_btn = new SpeechSynthesisUtterance("Speech");
 let utterance_logo = new SpeechSynthesisUtterance("Voice Bridge");
 
 const Header = () => {
@@ -83,6 +84,22 @@ const Header = () => {
                         </NavLink>
                     </li>
 
+                    {/* Speech Link */}
+                    <li className="font-semibold text-lg md:text-xl my-7 md:my-0 md:ml-8">
+                        <NavLink 
+                            to="/voicebridge/speech"
+                            className={({ isActive }) => 
+                                `cursor-pointer hover:text-yellow-600 ${isActive ? 'text-yellow-600 font-bold' : ''}`
+                            }
+                            onClick={() => setIsOpen(false)}
+                            onMouseEnter={() => handleMouseEnter(utterance_speech_btn)}
+                            onMouseLeave={handleMouseLeave}
+                        >
+                            Speech
+                        </NavLink>
+                    </li>
+
+
                     {/* Practice Link */}
                     <li className="font-semibold text-lg md:text-xl my-7 md:my-0 md:ml-8">
                         <NavLink 
@@ -100,7 +117,7 @@ const Header = () => {
 
                     {/* Get Started Button */}
                     <NavLink 
-                        to="/voicebridge/translate" 
+                        to="/voicebridge/login" 
                         className="btn bg-yellow-600 text-white py-1 px-3 md:ml-8 rounded text-lg md:text-xl font-bold cursor-pointer hover:bg-yellow-700"
                         onClick={() => setIsOpen(false)}
                         onMouseEnter={() => handleMouseEnter(utterance_get_started)}
