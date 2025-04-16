@@ -1,0 +1,10 @@
+/node_modules/
+.venv
+<<<<<<< HEAD
+venv
+/python-work/__pycache__/
+.env
+=======
+/venv/
+/python-work/__pycache__/
+>>>>>>> main
