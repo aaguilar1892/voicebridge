@@ -28,7 +28,7 @@ jobs:
       run: |
         cd voicebridge-app/server
         # Run app.py in background
-        python app.py &
+        CI=true python app.py &
         # Give it a few seconds to start
         sleep 5
         # Check if server is running on port 5001

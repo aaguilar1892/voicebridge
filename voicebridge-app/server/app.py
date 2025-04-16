@@ -1,4 +1,5 @@
 from flask import Flask, Response, jsonify
+import os
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -22,7 +23,16 @@ mp_face = mp.solutions.face_detection
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
 face = mp_face.FaceDetection(min_detection_confidence=0.5)
 
-cap = cv2.VideoCapture(0)
+# Check for CI mode to disable webcam in CI/CD environments
+CI_MODE = os.environ.get('CI') == 'true'
+cap = None
+if not CI_MODE:
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("Warning: Webcam not available. Running without video capture.")
+        cap = None
+else:
+    print("CI mode detected — webcam capture disabled.")
 
 
 def predict_word_from_frame(frame):
@@ -72,39 +82,47 @@ def predict_word_from_frame(frame):
 
 def generate_frames():
     while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
+        if cap:
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-        word_prediction = predict_word_from_frame(frame)
-        results = recognizer.process_frame(frame)
-        letter_prediction = svm.predict(results.right_hand_landmarks)
-        frame = recognizer.draw_landmarks(frame, results)
+            word_prediction = predict_word_from_frame(frame)
+            results = recognizer.process_frame(frame)
+            letter_prediction = svm.predict(results.right_hand_landmarks)
+            frame = recognizer.draw_landmarks(frame, results)
 
-        display_text = f"Word: {word_prediction} | Letter: {letter_prediction}"
-        x, y = 20, 70
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        scale = 2.2
-        color_white = (255, 255, 255)
-        color_black = (0, 0, 0)
+            display_text = f"Word: {word_prediction} | Letter: {letter_prediction}"
+            x, y = 20, 70
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            scale = 2.2
+            color_white = (255, 255, 255)
+            color_black = (0, 0, 0)
 
-        cv2.putText(frame, display_text, (x, y), font, scale, color_black, 10, cv2.LINE_AA)
-        cv2.putText(frame, display_text, (x, y), font, scale, color_white, 4, cv2.LINE_AA)
+            cv2.putText(frame, display_text, (x, y), font, scale, color_black, 10, cv2.LINE_AA)
+            cv2.putText(frame, display_text, (x, y), font, scale, color_white, 4, cv2.LINE_AA)
 
-        _, buffer = cv2.imencode('.jpg', frame)
-        frame_bytes = buffer.tobytes()
+            _, buffer = cv2.imencode('.jpg', frame)
+            frame_bytes = buffer.tobytes()
 
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+        else:
+            import time
+            time.sleep(1)
 
 
 @app.route('/video_feed')
 def video_feed():
+    if not cap:
+        return jsonify({"error": "Webcam not available"}), 503
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/predict_word', methods=['GET'])
 def predict_word():
+    if not cap:
+        return jsonify({'word': 'error'})
     ret, frame = cap.read()
     if not ret:
         return jsonify({'word': 'error'})
@@ -114,6 +132,8 @@ def predict_word():
 
 @app.route('/predict_letter', methods=['GET'])
 def predict_letter():
+    if not cap:
+        return jsonify({'letter': 'error'})
     ret, frame = cap.read()
     if not ret:
         return jsonify({'letter': 'error'})
