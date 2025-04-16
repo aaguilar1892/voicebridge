@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist -u \"github-actions-bot <action@github.com>\" --repo https://$GH_TOKEN@github.com/aaguilar1892/voicebridge.git"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
