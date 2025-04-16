@@ -8,51 +8,66 @@ from svm_classifier import SVM
 from gesture_recognition import GestureRecognizer
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 
-# Load word classifier
-word_model_dict = pickle.load(open('./model.p', 'rb'))
+# Load models
+word_model_dict = pickle.load(open('model.p', 'rb'))
 word_model = word_model_dict['model']
-
-# Load letter classifier (SVM)
-letter_model_path = 'model_training/alphabet_svm_pipeline.pkl'
-svm = SVM(letter_model_path, 'alphabet')
+svm = SVM('model_training/alphabet_svm_pipeline.pkl', 'alphabet')
 recognizer = GestureRecognizer()
 
-# Initialize MediaPipe Hands for word classifier
+# MediaPipe setup
 mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.3)
+mp_face = mp.solutions.face_detection
+hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
+face = mp_face.FaceDetection(min_detection_confidence=0.5)
 
 cap = cv2.VideoCapture(0)
 
 
 def predict_word_from_frame(frame):
     data_aux = []
-    x_, y_ = [], []
-
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    results = hands.process(frame_rgb)
+    hand_results = hands.process(frame_rgb)
+    face_results = face.process(frame_rgb)
 
-    if results.multi_hand_landmarks:
-        hand_landmarks = results.multi_hand_landmarks[0]
+    if not hand_results.multi_hand_landmarks or not face_results.detections:
+        return "nothing"
 
-        for lm in hand_landmarks.landmark:
-            x_.append(lm.x)
-            y_.append(lm.y)
+    detection = face_results.detections[0]
+    bbox = detection.location_data.relative_bounding_box
+    face_center_y = (bbox.ymin + bbox.height / 2)
 
-        for lm in hand_landmarks.landmark:
-            data_aux.append(lm.x - min(x_))
-            data_aux.append(lm.y - min(y_))
+    handedness = [h.classification[0].label for h in hand_results.multi_handedness]
+    hand_landmarks = hand_results.multi_hand_landmarks
+    hand_map = {'Left': None, 'Right': None}
 
-        while len(data_aux) < 42:
-            data_aux.append(0.0)
-        if len(data_aux) > 42:
-            data_aux = data_aux[:42]
+    for i, label in enumerate(handedness):
+        hand_map[label] = hand_landmarks[i]
 
-        prediction = word_model.predict([np.asarray(data_aux)])
-        return prediction[0]
+    hand_center_y = None
 
-    return "nothing"
+    for label in ['Left', 'Right']:
+        hand = hand_map[label]
+        if hand:
+            x_coords = [lm.x for lm in hand.landmark]
+            y_coords = [lm.y for lm in hand.landmark]
+            for x, y in zip(x_coords, y_coords):
+                data_aux.extend([x - min(x_coords), y - min(y_coords)])
+            if hand_center_y is None:
+                hand_center_y = np.mean(y_coords)
+        else:
+            data_aux.extend([0.0, 0.0] * 21)
+
+    offset = hand_center_y - face_center_y if hand_center_y is not None else 0.0
+    data_aux.append(offset)
+
+    if len(data_aux) != 85:
+        print("Warning: Feature vector length != 85", len(data_aux))
+        return "nothing"
+
+    prediction = word_model.predict([np.asarray(data_aux)])
+    return prediction[0]
 
 
 def generate_frames():
@@ -61,15 +76,11 @@ def generate_frames():
         if not ret:
             break
 
-        # Word prediction for overlay
         word_prediction = predict_word_from_frame(frame)
-
-        # Letter prediction for overlay
         results = recognizer.process_frame(frame)
         letter_prediction = svm.predict(results.right_hand_landmarks)
         frame = recognizer.draw_landmarks(frame, results)
 
-        # Display both predictions
         display_text = f"Word: {word_prediction} | Letter: {letter_prediction}"
         x, y = 20, 70
         font = cv2.FONT_HERSHEY_SIMPLEX

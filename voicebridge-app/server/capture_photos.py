@@ -5,7 +5,7 @@ import os
 import time
 import uuid
 
-IMAGES_PATH = './python-work/word_recognition/data'
+IMAGES_PATH = './data/Father'
 labels = ['Father']
 number_imgs = 20  # Number of images to capture for each label
 

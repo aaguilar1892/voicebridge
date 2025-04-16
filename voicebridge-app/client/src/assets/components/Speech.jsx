@@ -84,7 +84,7 @@ const Speech = () => {
                 {/* Textbox for voice - Larger, Scrollable & Rectangular */}
                 <textarea
                     value={transcript || "Speak now..."}
-                    className="w-full p-4 border border-gray-400 rounded-xl text-lg focus:ring-2 focus:ring-yellow-600 resize-none overflow-y-auto"
+                    className="w-full p-4 border border-gray-400 rounded-xl text-5xl focus:ring-2 focus:ring-yellow-600 resize-none overflow-y-auto"
                     rows="6"
                 />
 
