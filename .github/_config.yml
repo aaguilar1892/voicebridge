@@ -1,0 +1,11 @@
+exclude:
+  - voicebridge-app/server/venv
+  - node_modules
+  - .github
+  - .gitignore
+  - README.md
+  - package-lock.json
+  - yarn.lock
+  - requirements.txt
+  - *.pyc
+  - __pycache__
