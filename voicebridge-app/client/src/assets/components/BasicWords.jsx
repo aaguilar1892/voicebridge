@@ -2,6 +2,8 @@ import React from 'react';
 
 function Card() {
 
+    const [text, setText]
+
     return (
         <div className='flash-card text-8xl font-bold flex justify-center items-center w-175 h-150 p-6 shadow-2xl bg-white rounded-xl border-4 border-gray-500 shadow-yellow-600'>
             Front side
