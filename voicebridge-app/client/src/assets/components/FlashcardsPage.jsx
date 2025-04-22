@@ -37,7 +37,7 @@ const Flashcards = () => {
                     onMouseEnter={() => handleMouseEnter(utterance_alphabet)}
                     onMouseLeave={handleMouseLeave}
                    >
-                       <a href="/voicebridge/alphabet" className="font-bold text-5xl">Alphabet</a>
+                       <a href="/voicebridge/practice/flashcards/alphabet" className="font-bold text-5xl">Alphabet</a>
                    </div>
                    <div className="flex bg-yellow-600 rounded-xl text-white p-20 shadow-2xl cursor-pointer justify-center pl-30 pr-30"
                     onMouseEnter={() => handleMouseEnter(utterance_basic_words)}

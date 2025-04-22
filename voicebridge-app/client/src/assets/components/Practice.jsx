@@ -27,7 +27,7 @@ const Practice = () => {
 
       <div className="flex flex-col gap-12 w-full max-w-5xl items-center">
         <button
-          onClick={() => navigate('/practice/tutorial')}
+          onClick={() => navigate('/voicebridge/practice/tutorial')}
           onMouseEnter={() => handleSpeak(utterance_tutorial)}
           onMouseLeave={handleStop}
           className={tabStyle + " w-full max-w-4xl"}
@@ -36,7 +36,7 @@ const Practice = () => {
         </button>
 
         <button
-          onClick={() => navigate('/practice/flashcards')}
+          onClick={() => navigate('/voicebridge/practice/flashcards')}
           onMouseEnter={() => handleSpeak(utterance_flashcards)}
           onMouseLeave={handleStop}
           className={tabStyle + " w-full max-w-4xl"}
@@ -45,7 +45,7 @@ const Practice = () => {
         </button>
 
         <button
-          onClick={() => navigate('/practice/exercises')}
+          onClick={() => navigate('/voicebridge/practice/exercises')}
           onMouseEnter={() => handleSpeak(utterance_practice)}
           onMouseLeave={handleStop}
           className={tabStyle + " w-full max-w-4xl"}
