@@ -7,6 +7,9 @@ import Translate from './assets/components/Translate';
 import Speech from './assets/components/Speech';
 import Login from './assets/components/Login';
 import Signup from './assets/components/Signup';
+import Practice from './assets/components/Practice';
+import Alphabet from './assets/components/Alphabet';
+import BasicWords from './assets/components/BasicWords';
 
 function App() {
   return (
@@ -29,6 +32,9 @@ function App() {
         <Route path="/voicebridge/speech" element={<Speech />} />
         <Route path="/voicebridge/login" element={<Login />} />
         <Route path="/voicebridge/signup" element={<Signup />} />
+        <Route path="/voicebridge/practice" element={<Practice />} />
+        <Route path="/voicebridge/alphabet" element={<Alphabet />} />
+        <Route path="/voicebridge/basicwords" element={<BasicWords />} />
       </Routes>
     </Router>
   );
