@@ -103,7 +103,7 @@ const Header = () => {
                     {/* Practice Link */}
                     <li className="font-semibold text-lg md:text-xl my-7 md:my-0 md:ml-8">
                         <NavLink 
-                            to="/practice"
+                            to="/voicebridge/practice"
                             className={({ isActive }) => 
                                 `cursor-pointer hover:text-yellow-600 ${isActive ? 'text-yellow-600 font-bold' : ''}`
                             }

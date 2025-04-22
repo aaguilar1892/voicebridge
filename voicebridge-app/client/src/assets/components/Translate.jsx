@@ -28,7 +28,6 @@ const Translate = () => {
   const [wordDetected, setWordDetected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
-  const [setIsHovered] = useState(false);
   const [mode, setMode] = useState('word');
   const [countdown, setCountdown] = useState(null);
   const modeRef = useRef(mode);
@@ -38,12 +37,10 @@ const Translate = () => {
   }, [mode]);
 
   const handleHoverSpeak = (message) => {
-    setIsHovered(true);
     speakText(message);
   };
 
   const handleStopSpeak = () => {
-    setIsHovered(false);
     speechSynthesis.cancel();
   };
 
