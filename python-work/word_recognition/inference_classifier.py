@@ -9,7 +9,7 @@ model_dict = pickle.load(open('./model.p', 'rb'))
 model = model_dict['model']
 
 # Start video capture.
-cap = cv2.VideoCapture()
+cap = cv2.VideoCapture(1)
 
 # Initialize MediaPipe Hands with support for up to 2 hands.
 mp_hands = mp.solutions.hands
@@ -33,6 +33,7 @@ while True:
     if not ret:
         continue
 
+    frame = cv2.flip(frame, 1)  # Flip the frame horizontally for a mirror effect.    
     H, W, _ = frame.shape
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     face_results = face_detection.process(frame_rgb)
