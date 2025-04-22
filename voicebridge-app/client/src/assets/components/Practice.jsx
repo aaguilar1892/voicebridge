@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 let utterance_tutorial = new SpeechSynthesisUtterance("Go to tutorial mode");
-let utterance_flashcards = new SpeechSynthesisUtterance("Go to flashcards mode");
+let utterance_flashcards = new SpeechSynthesisUtterance("Go to flash cards mode");
 let utterance_practice = new SpeechSynthesisUtterance("Go to practice mode");
 
 const Practice = () => {
