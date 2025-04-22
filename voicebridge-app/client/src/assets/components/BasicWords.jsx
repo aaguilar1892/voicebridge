@@ -12,7 +12,7 @@ const BasicWords = () => {
     };
 
     return (
-        <div></div>
+        <div className='p-50'>Test</div>
     );
 };
  

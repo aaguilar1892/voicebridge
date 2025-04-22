@@ -43,7 +43,7 @@ const Flashcards = () => {
                     onMouseEnter={() => handleMouseEnter(utterance_basic_words)}
                     onMouseLeave={handleMouseLeave}
                    >
-                       <a href="/voicebridge/BasicWords" className="font-bold text-5xl">Basic Words</a>
+                       <a href="/voicebridge/practice/flashcards/basicwords" className="font-bold text-5xl">Basic Words</a>
                    </div>
                </div>
        </div>

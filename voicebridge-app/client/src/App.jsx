@@ -12,7 +12,7 @@ import Practice from './assets/components/Practice';
 import Flashcards from './assets/components/FlashcardsPage';
 //import Tutorial from './assets/components/TutorialPage';
 import Alphabet from './assets/components/Alphabet';
-
+import BasicWords from './assets/components/BasicWords';
 
 function App() {
   return (
@@ -38,7 +38,7 @@ function App() {
         <Route path="/voicebridge/practice" element={<Practice />} />
         <Route path="/voicebridge/practice/flashcards" element={<Flashcards />} />
         <Route path="/voicebridge/practice/flashcards/alphabet" element={<Alphabet />} />
-
+        <Route path="/voicebridge/practice/flashcards/basicwords" element={<BasicWords />} />
       </Routes>
     </Router>
   );
