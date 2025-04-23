@@ -5,3 +5,5 @@ joblib
 scikit-learn
 gtts
 pygame
+flask
+flask-cors

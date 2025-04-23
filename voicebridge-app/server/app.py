@@ -1,57 +1,126 @@
 from flask import Flask, Response, jsonify
-from flask_cors import CORS
 import cv2
 import mediapipe as mp
-import joblib
 import numpy as np
-from gesture_recognition import GestureRecognizer
+import pickle
+from flask_cors import CORS
 from svm_classifier import SVM
+from gesture_recognition import GestureRecognizer
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend communication
+CORS(app)
 
-# Initialize GestureRecognizer and SVM model
-model_path = 'model_training/alphabet_svm_pipeline.pkl'
-svm = SVM(model_path, 'alphabet')
+# Load models
+word_model_dict = pickle.load(open('model.p', 'rb'))
+word_model = word_model_dict['model']
+svm = SVM('model_training/alphabet_svm_pipeline.pkl', 'alphabet')
 recognizer = GestureRecognizer()
 
-# OpenCV Video Capture
+# MediaPipe setup
+mp_hands = mp.solutions.hands
+mp_face = mp.solutions.face_detection
+hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
+face = mp_face.FaceDetection(min_detection_confidence=0.5)
+
 cap = cv2.VideoCapture(0)
 
-latest_prediction = "nothing"  # Store the latest letter prediction
+
+def predict_word_from_frame(frame):
+    data_aux = []
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    hand_results = hands.process(frame_rgb)
+    face_results = face.process(frame_rgb)
+
+    if not hand_results.multi_hand_landmarks or not face_results.detections:
+        return "nothing"
+
+    detection = face_results.detections[0]
+    bbox = detection.location_data.relative_bounding_box
+    face_center_y = (bbox.ymin + bbox.height / 2)
+
+    handedness = [h.classification[0].label for h in hand_results.multi_handedness]
+    hand_landmarks = hand_results.multi_hand_landmarks
+    hand_map = {'Left': None, 'Right': None}
+
+    for i, label in enumerate(handedness):
+        hand_map[label] = hand_landmarks[i]
+
+    hand_center_y = None
+
+    for label in ['Left', 'Right']:
+        hand = hand_map[label]
+        if hand:
+            x_coords = [lm.x for lm in hand.landmark]
+            y_coords = [lm.y for lm in hand.landmark]
+            for x, y in zip(x_coords, y_coords):
+                data_aux.extend([x - min(x_coords), y - min(y_coords)])
+            if hand_center_y is None:
+                hand_center_y = np.mean(y_coords)
+        else:
+            data_aux.extend([0.0, 0.0] * 21)
+
+    offset = hand_center_y - face_center_y if hand_center_y is not None else 0.0
+    data_aux.append(offset)
+
+    if len(data_aux) != 85:
+        print("Warning: Feature vector length != 85", len(data_aux))
+        return "nothing"
+
+    prediction = word_model.predict([np.asarray(data_aux)])
+    return prediction[0]
+
 
 def generate_frames():
-    global latest_prediction
     while True:
         ret, frame = cap.read()
         if not ret:
             break
 
-        # Process frame and predict the letter
+        word_prediction = predict_word_from_frame(frame)
         results = recognizer.process_frame(frame)
+        letter_prediction = svm.predict(results.right_hand_landmarks)
         frame = recognizer.draw_landmarks(frame, results)
-        pred = svm.predict(results.right_hand_landmarks)
 
-        # Update the latest predicted letter
-        latest_prediction = pred
+        display_text = f"Word: {word_prediction} | Letter: {letter_prediction}"
+        x, y = 20, 70
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        scale = 2.2
+        color_white = (255, 255, 255)
+        color_black = (0, 0, 0)
 
-        # Display prediction on frame
-        cv2.putText(frame, pred, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+        cv2.putText(frame, display_text, (x, y), font, scale, color_black, 10, cv2.LINE_AA)
+        cv2.putText(frame, display_text, (x, y), font, scale, color_white, 4, cv2.LINE_AA)
 
-        # Encode and yield the frame
-        ret, jpeg = cv2.imencode('.jpg', frame)
-        if not ret:
-            continue
+        _, buffer = cv2.imencode('.jpg', frame)
+        frame_bytes = buffer.tobytes()
+
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+
 
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
+@app.route('/predict_word', methods=['GET'])
+def predict_word():
+    ret, frame = cap.read()
+    if not ret:
+        return jsonify({'word': 'error'})
+    prediction = predict_word_from_frame(frame)
+    return jsonify({'word': prediction})
+
+
 @app.route('/predict_letter', methods=['GET'])
 def predict_letter():
-    return jsonify({"letter": latest_prediction})
+    ret, frame = cap.read()
+    if not ret:
+        return jsonify({'letter': 'error'})
+    results = recognizer.process_frame(frame)
+    prediction = svm.predict(results.right_hand_landmarks)
+    return jsonify({'letter': prediction})
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
