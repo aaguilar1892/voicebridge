@@ -5,8 +5,8 @@ import os
 import time
 import uuid
 
-IMAGES_PATH = './data/Father'
-labels = ['Father']
+IMAGES_PATH = './python-work/word_recognition/data'
+labels = ['Happy']
 number_imgs = 20  # Number of images to capture for each label
 
 # Create a window to show the webcam feed
@@ -17,7 +17,7 @@ for label in labels:
     label_folder = os.path.join(IMAGES_PATH, label)
     os.makedirs(label_folder, exist_ok=True)
     
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1) #Change to 0 if you are using a laptop camera, keep at 1 for external camera.
     print(f'Collecting images for {label}')
     time.sleep(3)  # Wait 5 seconds before capturing
 
@@ -27,6 +27,8 @@ for label in labels:
             print("Failed to read from camera. Exiting.")
             break
         
+        frame = cv2.flip(frame, 1)  # Flip the frame horizontally for a mirror effect.
+
         # Display the frame in the "Webcam" window
         cv2.imshow("Webcam", frame)
         
