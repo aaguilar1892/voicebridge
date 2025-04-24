@@ -6,7 +6,7 @@ import pickle
 from flask_cors import CORS
 from svm_classifier import SVM
 from gesture_recognition import GestureRecognizer
-
+import os
 app = Flask(__name__)
 CORS(app)
 
@@ -22,7 +22,7 @@ mp_face = mp.solutions.face_detection
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
 face = mp_face.FaceDetection(min_detection_confidence=0.5)
 
-cap = cv2.VideoCapture(0)
+cap = None
 
 
 def predict_word_from_frame(frame):
@@ -103,6 +103,7 @@ def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+
 @app.route('/predict_word', methods=['GET'])
 def predict_word():
     ret, frame = cap.read()
@@ -121,6 +122,15 @@ def predict_letter():
     prediction = svm.predict(results.right_hand_landmarks)
     return jsonify({'letter': prediction})
 
+def main():                     # 🛠 wrap the camera + run logic
+    global cap
+    use_camera = os.getenv("USE_CAMERA", "1") == "1"
+    if use_camera:
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            print("WARNING: camera not available; continuing without it")
+            cap = None
+    app.run(debug=False, host='0.0.0.0', port=5001, use_reloader=False)
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+if __name__ == "__main__":      # 🛠 only executed when you run python app.py
+    main()

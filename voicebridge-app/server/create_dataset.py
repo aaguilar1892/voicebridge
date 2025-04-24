@@ -18,7 +18,9 @@ hands = mp_hands.Hands(static_image_mode=True, max_num_hands=2, min_detection_co
 mp_face_detection = mp.solutions.face_detection
 face_detection = mp_face_detection.FaceDetection(min_detection_confidence=0.5)
 
-DATA_DIR = './data'
+# If ./data is next to this script, great; otherwise make it absolute:
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR   = os.path.join(SCRIPT_DIR, 'data')   # <── adjust if your images live elsewhere
 
 data = []
 labels = []
@@ -26,10 +28,12 @@ labels = []
 # Each hand produces 42 features (21 landmarks * 2 coordinates).
 FEATURES_PER_HAND = 42
 
-for dir_ in os.listdir(DATA_DIR):
-    for img_path in os.listdir(os.path.join(DATA_DIR, dir_)):
-        # Read and convert the image.
-        img = cv2.imread(os.path.join(DATA_DIR, dir_, img_path))
+for label in os.listdir(DATA_DIR):
+    label_path = os.path.join(DATA_DIR, label)
+
+    for img_name in os.listdir(label_path):
+        img_path = os.path.join(label_path, img_name)
+        img = cv2.imread(img_path)
         if img is None:
             continue
         H, W, _ = img.shape
@@ -89,21 +93,19 @@ for dir_ in os.listdir(DATA_DIR):
             features_per_hand = features_per_hand[:2]
             hand_centers = hand_centers[:2]
             
-            data_aux = features_per_hand[0] + features_per_hand[1]
+            sample = features_per_hand[0] + features_per_hand[1]
 
             relative_offset = 0.0
             if face_center is not None:
-                hand_center_for_relative = hand_centers[0]
-                # Vertical offset (hand y minus face y) normalized by image height.
-                vertical_offset = hand_center_for_relative[1] - face_center[1]
+                vertical_offset = hand_centers[0][1] - face_center[1]
                 relative_offset = vertical_offset / H
             
             
             
             
-            data_aux.append(relative_offset)
-            data.append(data_aux)
-            labels.append(dir_)
+            sample.append(relative_offset)
+            data.append(sample)
+            labels.append(label)
 
 # Save the dataset.
 with open('data.pickle', 'wb') as f:
