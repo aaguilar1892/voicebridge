@@ -1,0 +1,54 @@
+# docker-compose.yml for VoiceBridge Application
+
+# Specify the Docker Compose file version
+version: '3.8'
+
+services:
+  # Backend Service (Flask Application)
+  backend:
+    # Specify the build context, the directory containing the Dockerfile and source code
+    build:
+      context: . # Use the current directory as the build context
+      dockerfile: backend.Dockerfile # Specify the backend Dockerfile name
+    # Assign a name to the container for easier identification
+    container_name: voicebridge-backend
+    # Map port 5001 on the host to port 5001 in the container
+    ports:
+      - "5001:5001"
+    # Load environment variables from .env file
+    env_file:
+      - .env
+    # --- Webcam Access ---
+    # Uncomment the following line(s) if running on Linux and needing direct webcam access.
+    # This grants the container access to the host's video device.
+    # May require running 'sudo' or adding your user to the 'docker' and 'video' groups.
+    # devices:
+    #   - "/dev/video0:/dev/video0"
+    # Note: Webcam access from containers can be complex and platform-dependent.
+    # This configuration might not work on all systems (e.g., macOS, Windows without WSL2 tweaks).
+
+  # Frontend Service (React Application served by Nginx)
+  frontend:
+    # Specify the build context and Dockerfile for the frontend
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    # Assign a name to the container
+    container_name: voicebridge-frontend
+    # Map port 8080 on the host to port 80 (Nginx default) in the container
+    # Access the frontend via http://localhost:8080
+    ports:
+      - "8080:80"
+    # Load environment variables from .env file
+    env_file:
+      - .env
+    # Declare that the frontend service depends on the backend service.
+    # Docker Compose will start the 'backend' service before starting 'frontend'.
+    depends_on:
+      - backend
+    # --- Environment Variables for API ---
+    # If your React app needs to know the backend URL, you can pass it as an environment variable.
+    # You would need to configure your React app (e.g., in vite.config.js or using process.env)
+    # to read this variable. The Nginx proxy_pass approach in nginx.conf is another alternative.
+    environment:
+      - VITE_API_BASE_URL=http://backend:5001 # Example using Vite env var
