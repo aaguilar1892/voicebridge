@@ -6,23 +6,27 @@ import {
   SpeakerWaveIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-
-const speakText = (text) => {
-  if (!text) return;
-  speechSynthesis.cancel();
-  const waitUntilReady = () => {
-    if (!speechSynthesis.speaking && !speechSynthesis.pending) {
-      const utterance = new SpeechSynthesisUtterance(text.toLowerCase());
-      utterance.lang = 'en-US';
-      speechSynthesis.speak(utterance);
-    } else {
-      setTimeout(waitUntilReady, 50);
-    }
-  };
-  waitUntilReady();
-};
+import { useTTS } from '../context/useTTS';
 
 const Translate = () => {
+  const { ttsEnabled } = useTTS(); // TTS state from context
+  
+  const speakText = (text) => {
+    if (!text || !ttsEnabled) return;
+    console.log("Trying to speak:", text); // Add this
+    speechSynthesis.cancel();
+    const waitUntilReady = () => {
+      if (!speechSynthesis.speaking && !speechSynthesis.pending) {
+        const utterance = new SpeechSynthesisUtterance(text.toLowerCase());
+        utterance.lang = 'en-US';
+        speechSynthesis.speak(utterance);
+      } else {
+        setTimeout(waitUntilReady, 50);
+      }
+    };
+    waitUntilReady();
+  };
+
   const [text, setText] = useState('');
   const [isWebcamOn, setIsWebcamOn] = useState(true);
   const [wordDetected, setWordDetected] = useState(false);
@@ -37,11 +41,11 @@ const Translate = () => {
   }, [mode]);
 
   const handleHoverSpeak = (message) => {
-    speakText(message);
+    if (ttsEnabled) speakText(message);
   };
 
   const handleStopSpeak = () => {
-    speechSynthesis.cancel();
+    if (ttsEnabled) speechSynthesis.cancel();
   };
 
   const fetchPrediction = async () => {
@@ -67,7 +71,6 @@ const Translate = () => {
       }
 
       setButtonClicked(true);
-
     } catch (error) {
       console.error('Error fetching prediction:', error);
       setWordDetected(false);
