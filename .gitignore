@@ -8,3 +8,5 @@ venv
 /venv/
 /python-work/__pycache__/
 >>>>>>> main
+/data.pickle/
+/model.p/
