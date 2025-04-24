@@ -10,3 +10,4 @@ venv
 >>>>>>> main
 /data.pickle/
 /model.p/
+/voicebridge-app/client/node_modules/
