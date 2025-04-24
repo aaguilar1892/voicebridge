@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import numpy as np
-
+import os
 
 TWO_HAND_MODE = True
 EXPECTED_FEATURES = 85 if TWO_HAND_MODE else 42
@@ -22,8 +22,11 @@ def pad_or_truncate(sample, expected_length=EXPECTED_FEATURES):
         sample = sample[:expected_length]
     return sample
 
+SCRIPT_DIR  = os.path.dirname(os.path.abspath(__file__))
+PICKLE_PATH = os.path.join(SCRIPT_DIR, 'data.pickle')
 
-data_dict = pickle.load(open('./data.pickle', 'rb'))
+
+data_dict = pickle.load(open(PICKLE_PATH, 'rb'))
 data = data_dict['data']      
 labels = np.asarray(data_dict['labels'])
 
