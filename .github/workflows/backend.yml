@@ -24,17 +24,20 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Check if server runs
+    - name: Boot Flask server (headless) and ping it
+      working-directory: voicebridge-app/server
+      env:
+        USE_CAMERA: "0"          # ← CI tells app.py *not* to open a webcam
       run: |
-        cd voicebridge-app/server
-        # Run app.py in background
-        CI=true python app.py &
-        # Give it a few seconds to start
+        # launch server in background, no auto-reload
+        python app.py &          # relies on app.run(use_reloader=False) in your patch
+        SERVER_PID=$!
+        # give it a moment to bind
         sleep 5
-        # Check if server is running on port 5001
-        nc -z localhost 5001
-        # Kill the server process
-        pkill -f "python app.py"
+        # verify port 5001 is listening
+        nc -z 127.0.0.1 5001
+        # cleanly stop the server
+        kill $SERVER_PID
 
     #- name: Lint with flake8
     #  run: |
