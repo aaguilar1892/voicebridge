@@ -11,6 +11,9 @@ import Practice from './assets/components/Practice';
 import Tutorial from './assets/components/Tutorial';
 import { TTSProvider } from './assets/context/TTSProvider';
 import TTSUnlocker from './assets/components/TTSUnlocker';
+import Flashcards from './assets/components/FlashcardsPage';
+import Alphabet from './assets/components/Alphabet';
+import BasicWords from './assets/components/BasicWords';
 
 function App() {
   return (
@@ -36,6 +39,9 @@ function App() {
           <Route path="/voicebridge/signup" element={<Signup />} />
           <Route path="/voicebridge/practice" element={<Practice />} />
           <Route path="/practice/tutorial" element={<Tutorial onBack={() => window.history.back()} />} />
+          <Route path="/practice/flashcards" element={<Flashcards />} />
+          <Route path="/voicebridge/practice/flashcards/alphabet" element={<Alphabet />} />
+          <Route path="/voicebridge/practice/flashcards/basicwords" element={<BasicWords />} />
         </Routes>
       </Router>
     </TTSProvider>
