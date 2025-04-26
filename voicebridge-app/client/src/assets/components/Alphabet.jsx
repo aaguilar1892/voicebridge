@@ -1,51 +1,41 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import React from 'react';
+
+function Card(props) {
+
+    const [text, setText] = React.useState(props.frontSide);
+    const [isFlipped, setIsFlipped] = React.useState(false);
+
+    function handleClick() {
+        if (!isFlipped) {
+            //setText(props.backSide);
+            setIsFlipped(true);
+        }
+        else {
+            setText(props.frontSide);
+            setIsFlipped(false);
+        }
+    };
+
+    if (!isFlipped) {
+        return (
+            <div className='flash-card text-8xl font-bold flex justify-center items-center w-175 h-150 p-6 shadow-2xl bg-white rounded-xl border-4 border-gray-500 shadow-yellow-600'
+             onClick={handleClick}
+            >
+                {props.frontSide}
+            </div>
+        );
+    } else {
+        return (
+            <div className='flash-card text-8xl font-bold flex justify-center items-center w-175 h-150 p-6 shadow-2xl bg-white rounded-xl border-4 border-gray-500 shadow-yellow-600 object-contain object-scale-down'
+             onClick={handleClick}
+            >
+                <img src={props.backSide} />
+            </div>
+        );
+    }    
+};
 
 const Alphabet = () => {
-
-    const [isWebcamOn, setIsWebcamOn] = useState(true);
-    const [isCapture, setIsCapture] = useState(false); // whether or not camera is capturing for the cards
-    const [letter, setLetter] = useState('');
-    const isCaptureRef = useRef(isCapture)
-
-
-    const handlePractice = () => {
-        
-        setIsCapture(!isCapture);
-        isCaptureRef.current = isCapture;
-        if (!isCapture) {
-            handleFlashcard();
-        } 
-    };
-
-
-    const handleFlashcard = async () => {
-        console.log('flashcard called')
-        // Shuffle flashcards
-        let letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
-        for (let i = letters.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [letters[i], letters[j]] = [letters[j], letters[i]]; // Swap elements
-        }
-        
-        let i = 0;
-        setLetter(letters[i])
-        console.log(letters[i])
-        while(!isCaptureRef.current && i < letters.length) {
-
-            const response = await axios.get('http://localhost:5001/predict_letter');
-            const prediction = response.data.letter;
-            console.log(prediction);
-            
-
-            if (prediction === letters[i]) {
-                i++;
-                setLetter(letters[i])
-            }
-        }
-          
-    };
-
 
     const handleMouseEnter = (utterance) => {
         speechSynthesis.speak(utterance);
@@ -57,43 +47,38 @@ const Alphabet = () => {
     };
 
     return (
-        <div className="flex flex-col items-center bg-gray-100 p-6 pt-24 min-h-screen">
-            <h1 className="text-4xl font-bold mb-6 text-gray-800">Alphabet Flash Cards</h1>
-
-            <div
-            className="self-center mt-2 px-4 py-2 text-gray-800 font-bold rounded-full text-2xl"
-            >   
-            {`Current Letter: ${letter}`}
+        <div className='pt-25 pl-10 flex flex-col'>
+            <div>
+                <h1 className='text-3xl font-bold'>Basic Words</h1>
             </div>
-
-            <div
-            className={`relative flex-[4] ml-4 md:ml-8 min-h-[320px] bg-white rounded-xl shadow-lg overflow-hidden aspect-video transition-all`}
-            aria-label="Webcam feed area"
-          >
-
-            {isWebcamOn ? (
-              <img
-                src="http://localhost:5001/video_feed"
-                alt="Live webcam feed"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-300">
-                <span className="text-gray-600 text-lg">Webcam Off</span>
-              </div>
-            )}
+            <div className='flex flex-col items-center p-5'>
+                <Card frontSide="A" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-A.png"></Card>
+                <Card frontSide="B" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-B-1536x864.png"></Card>
+                <Card frontSide="C" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-C-1536x864.png"></Card>
+                <Card frontSide="D" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-D-1536x864.png"></Card>
+                <Card frontSide="E" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-E.png"></Card>
+                <Card frontSide="F" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-F-1536x864.png"></Card>
+                <Card frontSide="G" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-G-1536x864.png"></Card>
+                <Card frontSide="H" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-H-1536x864.png"></Card>
+                <Card frontSide="I" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-I.png"></Card>
+                <Card frontSide="J" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-J-1536x864.png"></Card>
+                <Card frontSide="K" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-K-1536x864.png"></Card>
+                <Card frontSide="L" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-L-1536x864.png"></Card>
+                <Card frontSide="M" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-M-1536x864.png"></Card>
+                <Card frontSide="N" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-N-1536x864.png"></Card>
+                <Card frontSide="O" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-O-1536x864.png"></Card>
+                <Card frontSide="P" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-P-1536x864.png"></Card>
+                <Card frontSide="Q" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-Q-1536x864.png"></Card>
+                <Card frontSide="R" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-R-1536x864.png"></Card>
+                <Card frontSide="S" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-S.png"></Card>
+                <Card frontSide="T" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-T-1536x864.png"></Card>
+                <Card frontSide="U" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-U-1536x864.png"></Card>
+                <Card frontSide="V" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-V-1536x864.png"></Card>
+                <Card frontSide="W" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-W.png"></Card>
+                <Card frontSide="X" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-X-1536x864.png"></Card>
+                <Card frontSide="Y" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-Y-1536x864.png"></Card>
+                <Card frontSide="Z" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-Z-1536x864.png"></Card>
             </div>
-
-            <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-4">
-                <button
-                onClick={handlePractice}
-                className={'px-6 py-2 rounded-full text-lg font-semibold transition bg-white border border-blue-700 text-blue-700'}
-                >
-                    {isCapture ? "End Practice" : "Practice"} 
-                </button>
-            </div>
-
-            
         </div>
     );
 };
