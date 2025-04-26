@@ -1,5 +1,7 @@
 import React from 'react';
 
+let utterance_alphabet = new SpeechSynthesisUtterance("Alphabet");
+
 function Card(props) {
 
     const [text, setText] = React.useState(props.frontSide);
@@ -49,7 +51,12 @@ const Alphabet = () => {
     return (
         <div className='pt-25 pl-10 flex flex-col'>
             <div>
-                <h1 className='text-3xl font-bold'>Basic Words</h1>
+                <h1 className='text-3xl font-bold'
+                 onMouseEnter={() => handleMouseEnter(utterance_alphabet)}
+                 onMouseLeave={handleMouseLeave}
+                >
+                    Alphabet
+                </h1>
             </div>
             <div className='flex flex-col items-center p-5'>
                 <Card frontSide="A" backSide="https://1000logos.net/wp-content/uploads/2023/08/ASL-Alphabet-A.png"></Card>

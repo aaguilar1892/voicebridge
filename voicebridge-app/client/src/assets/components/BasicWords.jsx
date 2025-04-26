@@ -1,5 +1,19 @@
 import React from 'react';
 
+let utterance_words = new SpeechSynthesisUtterance("Basic Words");
+let utterance_hello = new SpeechSynthesisUtterance("Hello");
+let utterance_goodbye = new SpeechSynthesisUtterance("Goodbye");
+let utterance_please = new SpeechSynthesisUtterance("Please");
+let utterance_thanks = new SpeechSynthesisUtterance("Thanks");
+let utterance_sorry = new SpeechSynthesisUtterance("Sorry");
+let utterance_yes = new SpeechSynthesisUtterance("Yes");
+let utterance_no = new SpeechSynthesisUtterance("No");
+let utterance_okay = new SpeechSynthesisUtterance("Okay");
+let utterance_father = new SpeechSynthesisUtterance("Father");
+let utterance_mother = new SpeechSynthesisUtterance("Mother");
+let utterance_love = new SpeechSynthesisUtterance("I love you");
+let utterance_excuse = new SpeechSynthesisUtterance("Excuse me");
+
 function Card(props) {
 
     const [text, setText] = React.useState(props.frontSide);
@@ -49,7 +63,12 @@ const BasicWords = () => {
     return (
         <div className='pt-25 pl-10 flex flex-col'>
             <div>
-                <h1 className='text-3xl font-bold'>Basic Words</h1>
+                <h1 className='text-3xl font-bold'
+                 onMouseEnter={() => handleMouseEnter(utterance_words)}
+                 onMouseLeave={handleMouseLeave}
+                >
+                    Basic Words
+                </h1>
             </div>
             <div className='flex flex-col items-center p-5'>
                 <Card frontSide="Hello" backSide="https://res.cloudinary.com/spiralyze/image/upload/f_auto,w_948/BabySignLanguage/DictionaryPages/hello-webp.webp"></Card>
