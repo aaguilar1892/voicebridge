@@ -11,3 +11,4 @@ venv
 /data.pickle/
 /model.p/
 /voicebridge-app/client/node_modules/
+__pycache__/

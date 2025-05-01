@@ -7,8 +7,12 @@ from flask_cors import CORS
 from svm_classifier import SVM
 from gesture_recognition import GestureRecognizer
 import os
+
 app = Flask(__name__)
 CORS(app)
+
+# Initialize camera variable
+cap = None
 
 # Load models
 word_model_dict = pickle.load(open('model.p', 'rb'))
@@ -22,8 +26,14 @@ mp_face = mp.solutions.face_detection
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3)
 face = mp_face.FaceDetection(min_detection_confidence=0.5)
 
-cap = None
-
+def init_camera():
+    global cap
+    use_camera = os.getenv("USE_CAMERA", "1") == "1"
+    if use_camera:
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            print("WARNING: camera not available; continuing without it")
+            cap = None
 
 def predict_word_from_frame(frame):
     data_aux = []
@@ -69,9 +79,10 @@ def predict_word_from_frame(frame):
     prediction = word_model.predict([np.asarray(data_aux)])
     return prediction[0]
 
-
 def generate_frames():
     while True:
+        if cap is None:
+            break
         ret, frame = cap.read()
         if not ret:
             break
@@ -97,24 +108,24 @@ def generate_frames():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
-
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
-
 @app.route('/predict_word', methods=['GET'])
 def predict_word():
+    if cap is None:
+        return jsonify({'word': 'error'})
     ret, frame = cap.read()
     if not ret:
         return jsonify({'word': 'error'})
     prediction = predict_word_from_frame(frame)
     return jsonify({'word': prediction})
 
-
 @app.route('/predict_letter', methods=['GET'])
 def predict_letter():
+    if cap is None:
+        return jsonify({'letter': 'error'})
     ret, frame = cap.read()
     if not ret:
         return jsonify({'letter': 'error'})
@@ -122,15 +133,9 @@ def predict_letter():
     prediction = svm.predict(results.right_hand_landmarks)
     return jsonify({'letter': prediction})
 
-def main():                     # 🛠 wrap the camera + run logic
-    global cap
-    use_camera = os.getenv("USE_CAMERA", "1") == "1"
-    if use_camera:
-        cap = cv2.VideoCapture(0)
-        if not cap.isOpened():
-            print("WARNING: camera not available; continuing without it")
-            cap = None
+def main():
+    init_camera()
     app.run(debug=False, host='0.0.0.0', port=5001, use_reloader=False)
 
-if __name__ == "__main__":      # 🛠 only executed when you run python app.py
+if __name__ == "__main__":
     main()
