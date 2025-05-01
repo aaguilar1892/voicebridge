@@ -1,6 +1,8 @@
 import React from 'react';
 import { FaUser } from "react-icons/fa";
 import { useState } from 'react';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from './firebase';
 
 
 let utterance_login = new SpeechSynthesisUtterance("Log in");
