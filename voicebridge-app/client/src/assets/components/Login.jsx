@@ -9,16 +9,16 @@ let utterance_login = new SpeechSynthesisUtterance("Log in");
 let utterance_signup = new SpeechSynthesisUtterance("Sign up");
 let utterance_remember_me = new SpeechSynthesisUtterance("Remember me");
 let utterance_forgot_password = new SpeechSynthesisUtterance("Forgot password?");
-let utterance_username = new SpeechSynthesisUtterance("Username");
+let utterance_email = new SpeechSynthesisUtterance("Email");
 let utterance_password = new SpeechSynthesisUtterance("Password");
-let utterance_enter_username = new SpeechSynthesisUtterance("Enter username");
+let utterance_enter_email = new SpeechSynthesisUtterance("Enter email");
 let utterance_enter_password = new SpeechSynthesisUtterance("Enter password");
 
 
 const Login = () => {
 
    const [isHovered, setIsHovered] = useState(false);
-   const [username, setUsername] = useState('');
+   const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
 
    const handleMouseEnter = (utterance) => {
@@ -32,7 +32,7 @@ const Login = () => {
    const handleSubmit = async (e) => {
        e.preventDefault();
        try {
-           await signInWithEmailAndPassword(auth, username, password);
+           await signInWithEmailAndPassword(auth, email, password);
            console.log("Login successful.");
        } catch(err) {
            console.log(err);
@@ -54,15 +54,15 @@ const Login = () => {
                    </h1>
                    <hr className="mt-3"></hr>
                    <div className="mt-3">
-                       <label htmlFor="username" className="block text-base mb-2 font-semibold"
-                       onMouseEnter={() => handleMouseEnter(utterance_username)}
+                       <label htmlFor="email" className="block text-base mb-2 font-semibold"
+                       onMouseEnter={() => handleMouseEnter(utterance_email)}
                        onMouseLeave={handleMouseLeave}
                        >
-                           Username
+                           Email
                        </label>
-                       <input type="text" id="username" className="border w-full text-base px-2 py-2 focus:outline-none focus:ring-0 focus:border-gray-600 rounded shadow-xl" placeholder="Enter Username"
-                       onChange={e => setUsername(e.target.value)}
-                       onMouseEnter={() => handleMouseEnter(utterance_enter_username)}
+                       <input type="text" id="email" className="border w-full text-base px-2 py-2 focus:outline-none focus:ring-0 focus:border-gray-600 rounded shadow-xl" placeholder="Enter Username"
+                       onChange={e => setEmail(e.target.value)}
+                       onMouseEnter={() => handleMouseEnter(utterance_enter_email)}
                        onMouseLeave={handleMouseLeave}
                        />
                    </div>
