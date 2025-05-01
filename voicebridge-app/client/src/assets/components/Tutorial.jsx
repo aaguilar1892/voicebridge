@@ -159,9 +159,9 @@ const Tutorial = ({ onBack }) => {
         </div>
 
         <p className="tutorial-intro" onMouseEnter={() =>
-          speakText("Click on a letter to begin. Use arrow keys to navigate. Press Enter to retry.")
+          speakText("Click a letter to learn how to sign it. Use arrow keys to move, Enter to retry. This page helps you practice ASL signs with voice and camera feedback.")
         }>
-          Click on a letter to begin. Use arrow keys to navigate. Press Enter to retry.
+          Click a letter to learn how to sign it. Use arrow keys to move, Enter to retry. This page helps you practice ASL signs with voice and camera feedback.
         </p>
 
         {showTTSOverlay && <div className="tts-flash-overlay-inline">{flashMessage}</div>}
