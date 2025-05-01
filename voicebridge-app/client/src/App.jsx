@@ -14,6 +14,7 @@ import TTSUnlocker from './assets/components/TTSUnlocker';
 import Flashcards from './assets/components/FlashcardsPage';
 import Alphabet from './assets/components/Alphabet';
 import BasicWords from './assets/components/BasicWords';
+import Exercises from './assets/components/ExercisesPage';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/practice/flashcards" element={<Flashcards />} />
           <Route path="/voicebridge/practice/flashcards/alphabet" element={<Alphabet />} />
           <Route path="/voicebridge/practice/flashcards/basicwords" element={<BasicWords />} />
+          <Route path="/practice/exercises" element={<Exercises />} />
         </Routes>
       </Router>
     </TTSProvider>
