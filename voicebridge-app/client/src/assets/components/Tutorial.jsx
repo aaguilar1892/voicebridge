@@ -5,205 +5,182 @@ import './Tutorial.css';
 const Tutorial = ({ onBack }) => {
   const [selectedLetter, setSelectedLetter] = useState(null);
   const [isRecognizing, setIsRecognizing] = useState(false);
-  const [countdown, setCountdown] = useState(null);
   const [recognitionResult, setRecognitionResult] = useState(null);
   const [wordDetected, setWordDetected] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [detectedLetter, setDetectedLetter] = useState('');
-
-  useEffect(() => {
-    const handleKeyPress = (event) => {
-      if (event.key === 'Enter' && !isRecognizing && !loading) {
-        if (selectedLetter) {
-          speakInstructions(selectedLetter);
-        }
-      } else if (event.key === 'ArrowRight' && !isRecognizing && !loading) {
-        const currentIndex = Object.keys(aslSigns).indexOf(selectedLetter);
-        if (currentIndex < Object.keys(aslSigns).length - 1) {
-          const nextLetter = Object.keys(aslSigns)[currentIndex + 1];
-          handleLetterClick(nextLetter);
-        }
-      } else if (event.key === 'ArrowLeft' && !isRecognizing && !loading) {
-        const currentIndex = Object.keys(aslSigns).indexOf(selectedLetter);
-        if (currentIndex > 0) {
-          const prevLetter = Object.keys(aslSigns)[currentIndex - 1];
-          handleLetterClick(prevLetter);
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedLetter, isRecognizing, loading]);
-
-  const handleNextLetter = () => {
-    if (selectedLetter) {
-      setRecognitionResult(null);
-      setWordDetected(false);
-      setDetectedLetter('');
-      speakInstructions(selectedLetter);
-    }
-  };
+  const [ttsEnabled, setTtsEnabled] = useState(() => {
+    return localStorage.getItem('ttsEnabled') !== 'false';
+  });
+  const [showTTSOverlay, setShowTTSOverlay] = useState(false);
+  const [flashMessage, setFlashMessage] = useState('');
+  const [voices, setVoices] = useState([]);
+  const [selectedVoiceURI, setSelectedVoiceURI] = useState(() => {
+    return localStorage.getItem('ttsVoiceURI') || '';
+  });
 
   const aslSigns = {
-    'A': 'Make a fist with the thumb resting alongside the index finger.',
-    'B': 'Extend all four fingers upward, keeping them together. Thumb crosses the palm.',
-    'C': 'Curve all fingers and thumb into the shape of the letter C.',
-    'D': 'Touch the tips of the thumb, middle, ring, and pinky together, with index pointing up.',
-    'E': 'Curl fingers down to the palm, with thumb pressing against the fingertips.',
-    'F': 'Touch the tip of the index finger to the tip of the thumb, other fingers extended.',
-    'G': 'Point index finger and thumb horizontally, others closed.',
-    'H': 'Extend index and middle fingers together, horizontally.',
-    'I': 'Make a fist and raise the pinky finger.',
-    'J': 'Make the I shape and trace the letter J in the air with the pinky.',
-    'K': 'Hold index and middle fingers up in a V, thumb between them.',
-    'L': 'Extend thumb and index to form an L-shape, others tucked in.',
-    'M': 'Tuck thumb under the first three fingers.',
-    'N': 'Tuck thumb under the first two fingers.',
-    'O': 'Curve all fingers and thumb to touch at the tips, forming an O.',
-    'P': 'Make a K shape and point it downward.',
-    'Q': 'Make a G shape and point it downward.',
-    'R': 'Cross the index and middle fingers.',
-    'S': 'Make a fist with the thumb across the front of the fingers.',
-    'T': 'Place thumb between index and middle fingers.',
-    'U': 'Extend index and middle fingers together pointing upward.',
-    'V': 'Extend index and middle fingers in a V shape.',
-    'W': 'Extend index, middle, and ring fingers upward.',
-    'X': 'Bend index finger like a hook, others in a fist.',
-    'Y': 'Extend thumb and pinky, other fingers tucked in.',
-    'Z': 'Use the index finger to trace a Z shape in the air.'
+    A: 'Make a fist with the thumb resting alongside the index finger.',
+    B: 'Extend all four fingers upward, keeping them together. Thumb crosses the palm.',
+    C: 'Curve all fingers and thumb into the shape of the letter C.',
+    D: 'Touch the tips of the thumb, middle, ring, and pinky together, with index pointing up.',
+    E: 'Curl fingers down to the palm, with thumb pressing against the fingertips.',
+    F: 'Touch the tip of the index finger to the tip of the thumb, other fingers extended.',
+    G: 'Point index finger and thumb horizontally, others closed.',
+    H: 'Extend index and middle fingers together, horizontally.',
+    I: 'Make a fist and raise the pinky finger.',
+    J: 'Make the I shape and trace the letter J in the air with the pinky.',
+    K: 'Hold index and middle fingers up in a V, thumb between them.',
+    L: 'Extend thumb and index to form an L-shape, others tucked in.',
+    M: 'Tuck thumb under the first three fingers.',
+    N: 'Tuck thumb under the first two fingers.',
+    O: 'Curve all fingers and thumb to touch at the tips, forming an O.',
+    P: 'Make a K shape and point it downward.',
+    Q: 'Make a G shape and point it downward.',
+    R: 'Cross the index and middle fingers.',
+    S: 'Make a fist with the thumb across the front of the fingers.',
+    T: 'Place thumb between index and middle fingers.',
+    U: 'Extend index and middle fingers together pointing upward.',
+    V: 'Extend index and middle fingers in a V shape.',
+    W: 'Extend index, middle, and ring fingers upward.',
+    X: 'Bend index finger like a hook, others in a fist.',
+    Y: 'Extend thumb and pinky, other fingers tucked in.',
+    Z: 'Use the index finger to trace a Z shape in the air.'
   };
 
-  const speakInstructions = (letter) => {
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel(); // Cancel any ongoing speech
-      
-      const letterUtterance = new SpeechSynthesisUtterance(`Letter ${letter}.`);
-      const instructionUtterance = new SpeechSynthesisUtterance(aslSigns[letter]);
-      const practiceUtterance = new SpeechSynthesisUtterance("Try making this sign in front of the camera. You will have 3 seconds to practice.");
-      
-      letterUtterance.onend = () => {
-        window.speechSynthesis.speak(instructionUtterance);
-      };
+  useEffect(() => {
+    const loadVoices = () => {
+      const all = window.speechSynthesis.getVoices();
+      const filtered = all.filter(v =>
+        (v.lang === 'en-US' || v.lang === 'en-GB') &&
+        v.name.toLowerCase().includes('google')
+      );
+      setVoices(filtered);
+    };
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }, []);
 
-      instructionUtterance.onend = () => {
-        window.speechSynthesis.speak(practiceUtterance);
-      };
+  const speakText = (text) => {
+    window.speechSynthesis.cancel();
+    if (!ttsEnabled || !text) return;
 
-      practiceUtterance.onend = () => {
-        startCountdown();
-      };
-
-      window.speechSynthesis.speak(letterUtterance);
-    }
-  };
-
-  const startCountdown = () => {
-    setIsRecognizing(true);
-    let count = 3;
-    setCountdown(count);
-    const countdownInterval = setInterval(() => {
-      count -= 1;
-      if (count > 0) {
-        setCountdown(count);
-        const countUtterance = new SpeechSynthesisUtterance(count.toString());
-        window.speechSynthesis.speak(countUtterance);
-      } else {
-        clearInterval(countdownInterval);
-        setCountdown(null);
-        checkSign();
-      }
-    }, 1000);
-    const countUtterance = new SpeechSynthesisUtterance("3");
-    window.speechSynthesis.speak(countUtterance);
-  };
-
-  const checkSign = async () => {
-    if (loading) return;
-    setLoading(true);
-    setWordDetected(false);
-
-    try {
-      const response = await axios.get('http://localhost:5001/predict_letter');
-      const prediction = response.data.letter;
-      console.log("Prediction result:", prediction);
-      setDetectedLetter(prediction || '');
-
-      if (prediction && prediction.trim() === selectedLetter) {
-        setRecognitionResult('Correct! Well done!');
-        setWordDetected(true);
-        const successUtterance = new SpeechSynthesisUtterance('Correct! Well done! Press Enter to try again.');
-        window.speechSynthesis.speak(successUtterance);
-      } else if (prediction && prediction.trim().toLowerCase() === 'nothing') {
-        setRecognitionResult('No sign detected. Please try again.');
-        const nothingUtterance = new SpeechSynthesisUtterance('No sign has been displayed. Please try again.');
-        window.speechSynthesis.speak(nothingUtterance);
-      } else {
-        setRecognitionResult('Incorrect. Keep practicing!');
-        const failureUtterance = new SpeechSynthesisUtterance('Incorrect. Keep practicing! Press Enter to try again.');
-        window.speechSynthesis.speak(failureUtterance);
-      }
-    } catch (error) {
-      console.error('Error checking sign:', error);
-      setRecognitionResult('Error checking sign. Please try again.');
-    } finally {
-      setLoading(false);
-      setIsRecognizing(false);
-    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.65;
+    utterance.pitch = 1.0;
+    const voice = voices.find(v => v.voiceURI === selectedVoiceURI);
+    if (voice) utterance.voice = voice;
+    window.speechSynthesis.speak(utterance);
   };
 
   const handleLetterClick = (letter) => {
+    window.speechSynthesis.cancel();
     setSelectedLetter(letter);
     setRecognitionResult(null);
     setWordDetected(false);
     setDetectedLetter('');
-    speakInstructions(letter);
+    setIsRecognizing(true);
+
+    if (!ttsEnabled) return;
+
+    const step1 = new SpeechSynthesisUtterance(`Letter ${letter}.`);
+    const step2 = new SpeechSynthesisUtterance(aslSigns[letter]);
+    const step3 = new SpeechSynthesisUtterance('Can you try signing it?');
+
+    [step1, step2, step3].forEach((s) => {
+      s.lang = 'en-US';
+      s.rate = 0.65;
+      s.pitch = 1.0;
+      const voice = voices.find(v => v.voiceURI === selectedVoiceURI);
+      if (voice) s.voice = voice;
+    });
+
+    step1.onend = () => setTimeout(() => window.speechSynthesis.speak(step2), 500);
+    step2.onend = () => setTimeout(() => window.speechSynthesis.speak(step3), 600);
+    window.speechSynthesis.speak(step1);
   };
 
-  const speakText = (text) => {
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel(); // Cancel any ongoing speech
-      const utterance = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.speak(utterance);
-    }
+  useEffect(() => {
+    if (!isRecognizing) return;
+    const interval = setInterval(async () => {
+      try {
+        const response = await axios.get('http://localhost:5001/predict_letter');
+        const prediction = response.data.letter?.trim().toUpperCase();
+        if (prediction) {
+          setDetectedLetter(prediction);
+          if (selectedLetter && prediction === selectedLetter && !wordDetected) {
+            setRecognitionResult('Correct! Well done!');
+            setWordDetected(true);
+            speakText('Correct! Well done!');
+            setIsRecognizing(false);
+          }
+        }
+      } catch (err) {
+        console.error('Prediction error:', err);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isRecognizing, selectedLetter, wordDetected, ttsEnabled]);
+
+  useEffect(() => {
+    const keys = Object.keys(aslSigns);
+    const handleKeyDown = (e) => {
+      const index = keys.indexOf(selectedLetter);
+      if (e.key === 'Enter' && selectedLetter) handleLetterClick(selectedLetter);
+      else if (e.key === 'ArrowRight' && index < keys.length - 1) handleLetterClick(keys[index + 1]);
+      else if (e.key === 'ArrowLeft' && index > 0) handleLetterClick(keys[index - 1]);
+      else if (e.key === 'Shift') {
+        setTtsEnabled(prev => {
+          const next = !prev;
+          localStorage.setItem('ttsEnabled', next);
+          setFlashMessage(`Text-to-Speech is now ${next ? 'ON' : 'OFF'}`);
+          setShowTTSOverlay(true);
+          setTimeout(() => setShowTTSOverlay(false), 2300);
+          window.speechSynthesis.cancel();
+          return next;
+        });
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedLetter]);
+
+  const handleVoiceChange = (e) => {
+    setSelectedVoiceURI(e.target.value);
+    localStorage.setItem('ttsVoiceURI', e.target.value);
   };
 
   return (
     <div className="tutorial-container">
       <div className="tutorial-content">
         <div className="flex justify-between items-center mb-8">
-          <h1 
-            onMouseEnter={() => speakText("American Sign Language Tutorial")}
-            onMouseLeave={() => window.speechSynthesis.cancel()}
-          >
-            ASL Tutorial
-          </h1>
-          <button
-            onClick={onBack}
-            className="px-6 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
-            onMouseEnter={() => speakText("Go back to practice hub")}
-            onMouseLeave={() => window.speechSynthesis.cancel()}
-          >
-            Back to Practice Hub
-          </button>
+          <h1 onMouseEnter={() => speakText("ASL Tutorial")}>ASL Tutorial</h1>
+          <button onClick={onBack} className="btn btn-yellow">Back to Practice Hub</button>
         </div>
-        <p 
-          className="tutorial-intro"
-          onMouseEnter={() => speakText("Click on any letter to see its sign description and practice with real-time feedback. Use arrow keys to navigate between letters and press Enter to try again after each attempt.")}
-          onMouseLeave={() => window.speechSynthesis.cancel()}
-        >
-          Click on any letter to see its sign description and practice with real-time feedback.
-          Use arrow keys to navigate between letters and press Enter to try again after each attempt.
+
+        <p className="tutorial-intro" onMouseEnter={() =>
+          speakText("Click a letter to learn how to sign it. Use arrow keys to move, Enter to retry. This page helps you practice ASL signs with voice and camera feedback.")
+        }>
+          Click a letter to learn how to sign it. Use arrow keys to move, Enter to retry. This page helps you practice ASL signs with voice and camera feedback.
         </p>
-        
+
+        {showTTSOverlay && <div className="tts-flash-overlay-inline">{flashMessage}</div>}
+
+        <select className="voice-dropdown" value={selectedVoiceURI} onChange={handleVoiceChange}>
+          <option value="">Default Voice</option>
+          {voices.map(v => (
+            <option key={v.voiceURI} value={v.voiceURI}>
+              {v.name} ({v.lang})
+            </option>
+          ))}
+        </select>
+
         <div className="letters-grid">
-          {Object.keys(aslSigns).map((letter) => (
+          {Object.keys(aslSigns).map(letter => (
             <button
               key={letter}
               className={`letter-button ${selectedLetter === letter ? 'selected' : ''}`}
               onClick={() => handleLetterClick(letter)}
-              onMouseEnter={() => !isRecognizing && speakInstructions(letter)}
-              onMouseLeave={() => !isRecognizing && window.speechSynthesis.cancel()}
             >
               {letter}
             </button>
@@ -212,29 +189,10 @@ const Tutorial = ({ onBack }) => {
 
         {selectedLetter && (
           <div className="sign-description">
-            <h2 
-              onMouseEnter={() => speakText(`Letter ${selectedLetter}`)}
-              onMouseLeave={() => window.speechSynthesis.cancel()}
-            >
-              Letter {selectedLetter}
-            </h2>
-            <p 
-              onMouseEnter={() => speakText(aslSigns[selectedLetter])}
-              onMouseLeave={() => window.speechSynthesis.cancel()}
-            >
-              {aslSigns[selectedLetter]}
-            </p>
-            {countdown !== null && (
-              <div className="countdown">
-                Get ready! {countdown}
-              </div>
-            )}
+            <h2>Letter {selectedLetter}</h2>
+            <p>{aslSigns[selectedLetter]}</p>
             {recognitionResult && (
-              <div 
-                className={`recognition-result ${wordDetected ? 'success' : 'error'}`}
-                onMouseEnter={() => speakText(recognitionResult)}
-                onMouseLeave={() => window.speechSynthesis.cancel()}
-              >
+              <div className={`recognition-result ${wordDetected ? 'success' : 'error'}`}>
                 {recognitionResult}
               </div>
             )}
@@ -243,28 +201,11 @@ const Tutorial = ({ onBack }) => {
       </div>
 
       <div className={`camera-container ${wordDetected ? 'success' : recognitionResult && !wordDetected ? 'error' : ''}`}>
-        <img
-          src="http://localhost:5001/video_feed"
-          alt="Live webcam feed"
-          className="camera-feed"
-        />
-        {detectedLetter && (
-          <div 
-            className="detected-letter"
-            onMouseEnter={() => speakText(`Detected letter: ${detectedLetter}`)}
-            onMouseLeave={() => window.speechSynthesis.cancel()}
-          >
-            {detectedLetter}
-          </div>
-        )}
-        {countdown && (
-          <div className="countdown-overlay">
-            <span>{countdown}</span>
-          </div>
-        )}
+        <img src="http://localhost:5001/video_feed" alt="Live webcam feed" className="camera-feed" />
+        <div className="detected-letter">Detected: {detectedLetter || '...'}</div>
       </div>
     </div>
   );
 };
 
-export default Tutorial; 
+export default Tutorial;
