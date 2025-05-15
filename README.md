@@ -88,3 +88,67 @@ The gesture is then processed through a trained **machine learning model (SVM)**
 
 ❌ If no recognizable gesture is detected, a red X appears, letting the user know to try again.
 
+## Practice Mode
+
+The **Practice** tab provides users with three interactive learning modules to strengthen their ASL comprehension and performance:
+
+### Modes
+
+Upon clicking **Practice**, the user is presented with three large, animated buttons for the following modules:
+
+1. **Tutorial Mode**
+2. **Flashcards Mode**
+3. **Practice Mode**
+
+Each button has the following features:
+- Enlarged, rounded styling for accessibility.
+- Animated scaling effect on hover to indicate interactivity.
+- Text-to-Speech (TTS) playback when hovered, announcing the mode name (e.g., *"Go to flashcards mode"*).
+
+A heading above the buttons reads **“Welcome to Practice Mode”**, and when hovered, it is spoken aloud using TTS.
+
+---
+
+### 1. Tutorial Mode
+
+This mode is designed to **guide users through learning ASL signs step-by-step**. Users are introduced to basic vocabulary, gestures, and visual feedback. Key features include:
+
+- Instructional content
+- Large fonts and buttons
+- Optional voice guidance via TTS
+
+---
+
+### 2. Flashcards Mode
+
+Flashcards provide a **visual and auditory** way to learn common ASL words:
+
+- Each flashcard displays a high-quality image of an ASL sign and the associated word.
+- When hovered, the word is spoken aloud using TTS.
+- Users can flip through cards manually.
+
+---
+
+### 3. Practice Mode
+
+This mode enables **hands-on learning** by using the webcam for real-time gesture classification. Users can:
+
+- Perform an ASL gesture
+- Capture it with a single button
+- Get feedback on recognition success
+
+Textual results are displayed in a large textbox, and if a gesture is successfully recognized, it is:
+- Shown in the textbox
+- Read aloud via TTS
+- Visually confirmed with a green checkmark
+
+Incorrect gestures show a red X, prompting the user to try again.
+
+---
+
+### Accessibility Highlights
+
+- All interactive elements in **Practice Mode** use **Text-to-Speech** on hover to assist blind and visually impaired users.
+- Buttons are **extra large** and use **vivid contrast colors** for visibility.
+- Tab layout and animations ensure an intuitive experience.
+
