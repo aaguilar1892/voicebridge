@@ -13,9 +13,18 @@
 
 ## How to Run the Web App
 
+- Change directory to the VoiceBridge app
+```bash 
+cd voicebridge-app
+```
+
 ### 1. Backend (Flask)
 
 - Navigate to the backend directory.
+```bash
+cd server
+```
+
 - Create and activate a virtual environment:
 
 ```bash
